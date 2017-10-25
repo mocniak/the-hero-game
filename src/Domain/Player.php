@@ -57,5 +57,13 @@ class Player
     {
         return $this->speed;
     }
-    public function attack(Player $target) {}
+
+    public function getLuck(): int
+    {
+        return $this->luck;
+    }
+
+    public function attack(Player $target)
+    {
+    }
 }

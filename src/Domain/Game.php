@@ -12,14 +12,25 @@ class Game
         if ($player1->getSpeed() > $player2->getSpeed()) {
             $this->attacker = $player1;
             $this->defender = $player2;
-        } else {
+        } else if ($player1->getSpeed() < $player2->getSpeed()) {
             $this->attacker = $player2;
             $this->defender = $player1;
+        } else {
+            if ($player1->getLuck() > $player2->getLuck()) {
+                $this->attacker = $player1;
+                $this->defender = $player2;
+            } else if ($player1->getLuck() < $player2->getLuck()) {
+                $this->attacker = $player2;
+                $this->defender = $player1;
+            } else {
+                throw new \RuntimeException('Both players has same speed and luck');
+            }
         }
     }
 
     public function playRound()
     {
         $this->attacker->attack($this->defender);
+        list($this->attacker, $this->defender) = array($this->defender, $this->attacker);
     }
 }

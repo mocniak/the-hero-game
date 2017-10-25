@@ -1,4 +1,5 @@
 <?php
+
 namespace Hero\Tests\Domain;
 
 use Hero\Domain\Player;
@@ -15,8 +16,6 @@ class GameTest extends TestCase
         $slowPlayerMock->expects($this->once())
             ->method('getSpeed')
             ->willReturn(50);
-        $slowPlayerMock->expects($this->never())
-            ->method('attack');
 
         $fastPlayerMock = $this->getMockBuilder(Player::class)
             ->disableOriginalConstructor()
@@ -29,6 +28,52 @@ class GameTest extends TestCase
             ->with($slowPlayerMock);
 
         $game = new Game($fastPlayerMock, $slowPlayerMock);
+        $game->playRound();
+
+        return ['game' => $game, 'slowPlayer' => $slowPlayerMock];
+    }
+
+    public function testIfBothPlayersHaveSameSpeedFirstAttackIsDoneByTheOneWithHighestLuck()
+    {
+        $unluckyPlayer = $this->getMockBuilder(Player::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $unluckyPlayer->expects($this->any())
+            ->method('getSpeed')
+            ->willReturn(50);
+        $unluckyPlayer->expects($this->any())
+            ->method('getLuck')
+            ->willReturn(50);
+        $unluckyPlayer->expects($this->never())
+            ->method('attack');
+
+        $luckyPlayer = $this->getMockBuilder(Player::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $luckyPlayer->expects($this->any())
+            ->method('getSpeed')
+            ->willReturn(50);
+        $luckyPlayer->expects($this->any())
+            ->method('getLuck')
+            ->willReturn(100);
+        $luckyPlayer->expects($this->once())
+            ->method('attack')
+            ->with($unluckyPlayer);
+
+        $game = new Game($luckyPlayer, $unluckyPlayer);
+        $game->playRound();
+    }
+
+    /**
+     * @depends testFirstAttackIsDoneByThePlayerWithTheHigherSpeed
+     */
+    public function testAfterOneRoundPlayersSwitchRoles(array $array)
+    {
+        /** @var Game $game */
+        $game = $array['game'];
+        $slowPlayer = $array['slowPlayer'];
+        $slowPlayer->expects($this->once())
+            ->method('attack');
         $game->playRound();
     }
 }
