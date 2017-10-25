@@ -1,40 +1,50 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mocniak
- * Date: 25.10.17
- * Time: 22:41
- */
 
-namespace Mocniak\Hero\Tests\Domain;
+namespace Hero\Tests\Domain;
 
-use Mocniak\Hero\Domain\AttackSkillInterface;
-use Mocniak\Hero\Domain\DefenceSkillInterface;
-use Mocniak\Hero\Domain\Player;
-use Mocniak\Hero\Domain\Strike;
+use Hero\Domain\Player;
 use PHPUnit\Framework\TestCase;
 
 class PlayerTest extends TestCase
 {
-    /** @var Player */
-    private $player;
-    /** @var AttackSkillInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $attackSkillMock;
-
-    public function setUp()
+    public function testDamageIsSubtractedFromDefendersHealth()
     {
-        $this->attackSkillMock = $this->getMockBuilder(AttackSkillInterface::class)->getMock();
-        $attackSkills = [$this->attackSkillMock];
-        $defenceSkills = [$this->getMockBuilder(DefenceSkillInterface::class)->getMock()];
-        $this->player = new Player("Player", 80, 80, 60, 30, 30, $attackSkills, $defenceSkills);
+        $health = 100;
+        $strength = 70;
+        $defence = 50;
+        $speed = 100;
+        $luck = 0;
+        $attacker = new Player('attacker', $health, $strength, $defence, $speed, $luck, [], []);
+        $defender = new Player('defender', $health, $strength, $defence, $speed, $luck, [], []);
+
+        $attacker->attack($defender);
+        $this->assertEquals($health - ($strength - $defence), $defender->getHealth());
+        $this->assertEquals($health, $attacker->getHealth());
     }
 
-    public function testPlayersStrikesAreModifiedByHisAttackSkills()
+    public function testPlayerLosesHealthWhenTakesAHit()
     {
-        $strike = new Strike();
-        $this->attackSkillMock->expects($this->once())
-            ->method('applySkill')
-            ->willReturn($strike);
-        $this->assertSame($strike,$this->player->getStrikes()[0]);
+        $health = 100;
+        $strength = 70;
+        $defence = 50;
+        $speed = 100;
+        $luck = 0;
+        $defender = new Player('defender', $health, $strength, $defence, $speed, $luck, [], []);
+        $strike = 60;
+        $defender->takeAHit($strike);
+        $this->assertEquals($health - ($strike - $defence), $defender->getHealth());
+    }
+
+    public function testPlayerDoesNotLoseHealthWhenTakesAHitButHasALotOfLuck()
+    {
+        $health = 100;
+        $strength = 70;
+        $defence = 50;
+        $speed = 100;
+        $luck = 100;
+        $defender = new Player('defender', $health, $strength, $defence, $speed, $luck, [], []);
+        $strike = 60;
+        $defender->takeAHit($strike);
+        $this->assertEquals($health, $defender->getHealth());
     }
 }

@@ -53,6 +53,18 @@ class Player
         $this->attackSkills = $attackSkills;
     }
 
+    public function attack(Player $defender)
+    {
+        $defender->takeAHit($this->strength);
+    }
+
+    public function takeAHit($strike)
+    {
+        if (!$this->amILuckyThisTime()) {
+            $this->health = $this->health - ($strike - $this->defence);
+        }
+    }
+
     public function getSpeed(): int
     {
         return $this->speed;
@@ -63,7 +75,17 @@ class Player
         return $this->luck;
     }
 
-    public function attack(Player $target)
+    public function getHealth(): int
     {
+        return $this->health;
+    }
+
+    private function amILuckyThisTime(): bool
+    {
+        if ($this->luck + rand(0, 99) > 100) {
+            return true;
+        }
+
+        return false;
     }
 }
