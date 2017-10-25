@@ -65,6 +65,9 @@ class Player
         }
     }
 
+    public function areYouDead(): bool
+    {}
+
     public function getSpeed(): int
     {
         return $this->speed;

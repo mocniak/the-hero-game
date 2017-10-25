@@ -4,8 +4,14 @@ namespace Hero\Domain;
 
 class Game
 {
+    const TURNS = 20;
+
     private $attacker;
     private $defender;
+    /** @var integer */
+    private $turnsCounter;
+    /** @var boolean */
+    private $gameOver;
 
     public function __construct(Player $player1, Player $player2)
     {
@@ -26,11 +32,22 @@ class Game
                 throw new \RuntimeException('Both players has same speed and luck');
             }
         }
+        $this->turnsCounter = 0;
+        $this->gameOver = false;
     }
 
     public function playRound()
     {
         $this->attacker->attack($this->defender);
+        if ($this->defender->areYouDead()) {
+            $this->gameOver = true;
+        }
+        // flip players
         list($this->attacker, $this->defender) = array($this->defender, $this->attacker);
+    }
+
+    public function isGameOver(): bool
+    {
+        return $this->gameOver;
     }
 }

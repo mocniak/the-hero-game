@@ -76,4 +76,30 @@ class GameTest extends TestCase
             ->method('attack');
         $game->playRound();
     }
+
+    public function testGameEndsWhenOneOfThePlayerDies() {
+        $slowPlayerMock = $this->getMockBuilder(Player::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $slowPlayerMock->expects($this->once())
+            ->method('getSpeed')
+            ->willReturn(50);
+        $slowPlayerMock->expects($this->once())
+            ->method('areYouDead')
+            ->willReturn(true);
+
+        $fastPlayerMock = $this->getMockBuilder(Player::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $fastPlayerMock->expects($this->once())
+            ->method('getSpeed')
+            ->willReturn(100);
+        $fastPlayerMock->expects($this->once())
+            ->method('attack')
+            ->with($slowPlayerMock);
+
+        $game = new Game($fastPlayerMock, $slowPlayerMock);
+        $game->playRound();
+        $this->assertTrue($game->isGameOver());
+    }
 }
