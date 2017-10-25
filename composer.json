@@ -1,0 +1,25 @@
+{
+  "name": "mocniak/hero",
+  "description": "Simple Hero Game.",
+  "type": "application",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Karol Mocniak",
+      "email": "karol@mocniak.pl"
+    }
+  ],
+  "require": {
+    "php": "^7.1",
+    "symfony/yaml": "^3.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Hero\\": "src/",
+      "Hero\\Tests\\": "tests/"
+    }
+  }
+}
