@@ -1,9 +1,7 @@
 <?php
+namespace Hero\Domain;
 
-namespace Mocniak\Hero\Domain;
-
-
-class DefenceSkillInterface
+interface DefenceSkillInterface
 {
 
 }

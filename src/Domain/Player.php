@@ -55,18 +55,26 @@ class Player
 
     public function attack(Player $defender)
     {
-        $defender->takeAHit($this->strength);
+        $strikes = [$this->strength];
+        /** @var AttackSkillInterface $attackSkill */
+        foreach ($this->attackSkills as $attackSkill) {
+            $strikes = $attackSkill->modifyStrikes($strikes);
+        }
+        $defender->takeAHit($strikes);
     }
 
-    public function takeAHit($strike)
+    public function takeAHit(array $strikes)
     {
-        if (!$this->amILuckyThisTime()) {
-            $this->health = $this->health - ($strike - $this->defence);
+        foreach ($strikes as $strike) {
+            if (!$this->amILuckyThisTime()) {
+                $this->health = $this->health - ($strike - $this->defence);
+            }
         }
     }
 
     public function areYouDead(): bool
-    {}
+    {
+    }
 
     public function getSpeed(): int
     {

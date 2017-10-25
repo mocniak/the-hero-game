@@ -29,7 +29,7 @@ class Game
                 $this->attacker = $player2;
                 $this->defender = $player1;
             } else {
-                throw new \RuntimeException('Both players has same speed and luck');
+                throw new \RuntimeException('Both players have same speed and luck');
             }
         }
         $this->roundCounter = 0;

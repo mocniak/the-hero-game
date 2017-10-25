@@ -1,9 +1,9 @@
 <?php
 
-namespace Mocniak\Hero\Domain;
+namespace Hero\Domain;
 
-
-class AttackSkillInterface
+interface AttackSkillInterface
 {
-
+    /** @return int[] */
+    public function modifyStrikes(array $strikes): array;
 }
