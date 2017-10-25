@@ -77,7 +77,8 @@ class GameTest extends TestCase
         $game->playRound();
     }
 
-    public function testGameEndsWhenOneOfThePlayerDies() {
+    public function testGameEndsWhenOneOfThePlayerDies()
+    {
         $slowPlayerMock = $this->getMockBuilder(Player::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -99,6 +100,44 @@ class GameTest extends TestCase
             ->with($slowPlayerMock);
 
         $game = new Game($fastPlayerMock, $slowPlayerMock);
+        $game->playRound();
+        $this->assertTrue($game->isGameOver());
+    }
+
+    public function testGameEndsWhenNumberOfTurnsReachesALimit()
+    {
+        $slowPlayerMock = $this->getMockBuilder(Player::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $fastPlayerMock = $this->getMockBuilder(Player::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $slowPlayerMock->expects($this->any())
+            ->method('getSpeed')
+            ->willReturn(50);
+        $slowPlayerMock->expects($this->any())
+            ->method('attack')
+            ->with($fastPlayerMock);
+        $slowPlayerMock->expects($this->any())
+            ->method('areYouDead')
+            ->willReturn(false);
+
+        $fastPlayerMock->expects($this->once())
+            ->method('getSpeed')
+            ->willReturn(100);
+        $fastPlayerMock->expects($this->any())
+            ->method('attack')
+            ->with($slowPlayerMock);
+        $fastPlayerMock->expects($this->any())
+            ->method('areYouDead')
+            ->willReturn(false);
+
+        $game = new Game($fastPlayerMock, $slowPlayerMock);
+        for ($i = 1; $i < Game::TURNS; $i++) {
+            $game->playRound();
+        }
+        $this->assertFalse($game->isGameOver());
         $game->playRound();
         $this->assertTrue($game->isGameOver());
     }

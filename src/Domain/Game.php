@@ -9,7 +9,7 @@ class Game
     private $attacker;
     private $defender;
     /** @var integer */
-    private $turnsCounter;
+    private $roundCounter;
     /** @var boolean */
     private $gameOver;
 
@@ -32,16 +32,20 @@ class Game
                 throw new \RuntimeException('Both players has same speed and luck');
             }
         }
-        $this->turnsCounter = 0;
+        $this->roundCounter = 0;
         $this->gameOver = false;
     }
 
     public function playRound()
     {
+        $this->roundCounter++;
+
         $this->attacker->attack($this->defender);
-        if ($this->defender->areYouDead()) {
+
+        if ($this->defender->areYouDead() || $this->roundCounter >= self::TURNS) {
             $this->gameOver = true;
         }
+
         // flip players
         list($this->attacker, $this->defender) = array($this->defender, $this->attacker);
     }
