@@ -29,9 +29,13 @@ class Player
      */
     private $luck;
     /**
-     * @var array
+     * @var AttackSkillInterface[]
      */
     private $attackSkills;
+    /**
+     * @var DefenceSkillInterface[]
+     */
+    private $defenceSkills;
 
     public function __construct(
         string $name,
@@ -51,24 +55,30 @@ class Player
         $this->speed = $speed;
         $this->luck = $luck;
         $this->attackSkills = $attackSkills;
+        $this->defenceSkills = $defenceSkills;
     }
 
-    public function attack(Player $defender)
+    public function attack(Player $defender): void
     {
         $strikes = [$this->strength];
         /** @var AttackSkillInterface $attackSkill */
         foreach ($this->attackSkills as $attackSkill) {
             $strikes = $attackSkill->modifyStrikes($strikes);
         }
-        $defender->takeAHit($strikes);
+        foreach ($strikes as $strike) {
+            $defender->takeAHit($strike);
+        }
     }
 
-    public function takeAHit(array $strikes)
+    public function takeAHit(int $strike): void
     {
-        foreach ($strikes as $strike) {
-            if (!$this->amILuckyThisTime()) {
-                $this->health = $this->health - ($strike - $this->defence);
+        if (!$this->amILuckyThisTime()) {
+            $damage = $strike - $this->defence;
+            /** @var DefenceSkillInterface $defenceSkill */
+            foreach ($this->defenceSkills as $defenceSkill) {
+                $damage = $defenceSkill->modifyDamage($damage);
             }
+            $this->health = $this->health - $damage;
         }
     }
 

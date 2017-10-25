@@ -3,6 +3,7 @@
 namespace Hero\Tests\Domain;
 
 use Hero\Domain\AttackSkillInterface;
+use Hero\Domain\DefenceSkillInterface;
 use Hero\Domain\Player;
 use PHPUnit\Framework\TestCase;
 
@@ -32,7 +33,7 @@ class PlayerTest extends TestCase
         $luck = 0;
         $defender = new Player('defender', $health, $strength, $defence, $speed, $luck, [], []);
         $strike = 60;
-        $defender->takeAHit([$strike]);
+        $defender->takeAHit($strike);
         $this->assertEquals($health - ($strike - $defence), $defender->getHealth());
     }
 
@@ -45,11 +46,12 @@ class PlayerTest extends TestCase
         $luck = 100;
         $defender = new Player('defender', $health, $strength, $defence, $speed, $luck, [], []);
         $strike = 60;
-        $defender->takeAHit([$strike]);
+        $defender->takeAHit($strike);
         $this->assertEquals($health, $defender->getHealth());
     }
 
-    public function testAttackSkillsModifiesStrikes() {
+    public function testAttackSkillsModifiesStrikes()
+    {
         $health = 100;
         $strength = 70;
         $defence = 50;
@@ -57,7 +59,7 @@ class PlayerTest extends TestCase
         $luck = 0;
         $attackSkillMock = $this->getMockBuilder(AttackSkillInterface::class)
             ->getMock();
-        $modifiedStrikes = ['array of strikes'];
+        $modifiedStrikes = [123];
         $attackSkillMock->expects($this->once())
             ->method('modifyStrikes')
             ->with([$strength])
@@ -67,8 +69,29 @@ class PlayerTest extends TestCase
             ->getMock();
         $defenderMock->expects($this->once())
             ->method('takeAHit')
-            ->with($modifiedStrikes);
+            ->with($modifiedStrikes[0]);
         $attacker = new Player('attacker', $health, $strength, $defence, $speed, $luck, [$attackSkillMock], []);
         $attacker->attack($defenderMock);
+    }
+
+    public function testDefenceSkillsModifiesDamage()
+    {
+        $health = 100;
+        $strength = 70;
+        $defence = 50;
+        $speed = 100;
+        $luck = 0;
+        $strike = 50;
+        $modifiedDamage = 20;
+
+        $defenceSkillMock = $this->getMockBuilder(DefenceSkillInterface::class)
+            ->getMock();
+        $defenceSkillMock->expects($this->once())
+            ->method('modifyDamage')
+            ->with($this->equalTo($strike - $defence))
+            ->willReturn($modifiedDamage);
+        $defender = new Player('attacker', $health, $strength, $defence, $speed, $luck, [], [$defenceSkillMock]);
+        $defender->takeAHit($strike);
+        $this->assertEquals($health - $modifiedDamage, $defender->getHealth());
     }
 }
