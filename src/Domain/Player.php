@@ -78,7 +78,10 @@ class Player
             foreach ($this->defenceSkills as $defenceSkill) {
                 $damage = $defenceSkill->modifyDamage($damage);
             }
+            echo $this->name . ' gets ' . $damage . ' damage points.' . PHP_EOL;
             $this->health = $this->health - $damage;
+        } else {
+            echo $this->name . ' is lucky this time!' . PHP_EOL;
         }
     }
 
@@ -109,5 +112,10 @@ class Player
         }
 
         return false;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 }

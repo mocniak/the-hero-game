@@ -40,10 +40,21 @@ class Game
     {
         $this->roundCounter++;
 
+        echo '==== ROUND ' . $this->roundCounter . ' ====' . PHP_EOL;
+        echo $this->attacker->getName() . ' attacks ' . $this->defender->getName() . '!' . PHP_EOL;
         $this->attacker->attack($this->defender);
+        echo $this->defender->getName() . ' has ' . $this->defender->getHealth(). 'HP left.'.PHP_EOL;
 
-        if ($this->defender->areYouDead() || $this->roundCounter >= self::TURNS) {
+        if ($this->defender->areYouDead()) {
             $this->gameOver = true;
+            echo 'Player ' . $this->defender->getName() . ' dies!' . PHP_EOL;
+            echo 'Player ' . $this->attacker->getName() . ' wins!' . PHP_EOL;
+        } else if ($this->roundCounter >= self::TURNS) {
+            $this->gameOver = true;
+            echo 'End of the game, limit of ' . self::TURNS . ' rounds reached.' . PHP_EOL;
+        }
+        if ($this->gameOver) {
+            echo '==== GAME OVER ====' . PHP_EOL;
         }
 
         // flip players
