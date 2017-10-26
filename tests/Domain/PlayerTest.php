@@ -94,4 +94,20 @@ class PlayerTest extends TestCase
         $defender->takeAHit($strike);
         $this->assertEquals($health - $modifiedDamage, $defender->getHealth());
     }
+
+    public function testPlayerIsDeadWhenHisHealthIsZeroOrLess()
+    {
+        $deadlyHealth = 0;
+        $healthyHealth = 1;
+        $strength = 70;
+        $defence = 50;
+        $speed = 100;
+        $luck = 0;
+
+        $deadPlayer = new Player('attacker', $deadlyHealth, $strength, $defence, $speed, $luck, [], []);
+        $alivePlayer = new Player('attacker', $healthyHealth, $strength, $defence, $speed, $luck, [], []);
+
+        $this->assertTrue($deadPlayer->areYouDead());
+        $this->assertFalse($alivePlayer->areYouDead());
+    }
 }

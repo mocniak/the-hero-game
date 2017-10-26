@@ -84,6 +84,7 @@ class Player
 
     public function areYouDead(): bool
     {
+        return ($this->health <= 0);
     }
 
     public function getSpeed(): int
